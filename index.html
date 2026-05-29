@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Knihovna & PDF Prohlížeč</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;500;600&family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <!-- CSS Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="theme-wood">
+
+    <div class="app-container sidebar-collapsed" id="appContainer">
+        
+        <!-- Collapsible Sidebar Panel -->
+        <aside class="sidebar collapsed" id="sidebarPanel">
+            <div class="brand">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M6 6h10"/><path d="M6 10h10"/><path d="M6 14h10"/></svg>
+                <h1>3D Kniha</h1>
+            </div>
+            
+            <!-- Visual Settings -->
+            <div class="sidebar-section">
+                <h3>Prostředí & Vzhled</h3>
+                <div class="select-theme">
+                    <div class="theme-opt active" data-theme="wood">Dřevo</div>
+                    <div class="theme-opt" data-theme="dark">Tmavá</div>
+                    <div class="theme-opt" data-theme="light">Světlá</div>
+                </div>
+            </div>
+            
+            <!-- Interactive Settings -->
+            <div class="sidebar-section">
+                <h3>Nastavení Knihy</h3>
+                
+                <div class="control-row">
+                    <label for="soundToggle">Zvuk otáčení</label>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="soundToggle" checked>
+                        <span class="slider-round"></span>
+                    </label>
+                </div>
+                
+                <div class="control-row">
+                    <label for="autoplayToggle">Automatické otáčení</label>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="autoplayToggle">
+                        <span class="slider-round"></span>
+                    </label>
+                </div>
+
+                 <div class="control-row" style="flex-direction: column; align-items: flex-start; gap: 0.5rem;">
+                    <div style="display: flex; justify-content: space-between; width: 100%;">
+                        <label for="speedSlider">Rychlost otáčení</label>
+                        <span id="speedVal" style="font-size: 0.8rem; color: var(--accent-color);">1000ms</span>
+                    </div>
+                    <input type="range" class="app-slider" id="speedSlider" min="300" max="1500" step="100" value="1000">
+                </div>
+            </div>
+        </aside>
+        
+        <!-- Toggle button for Sidebar -->
+        <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle settings">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        
+        <!-- Floating Zoom Controls -->
+        <div class="zoom-controls">
+            <button class="btn-zoom" id="zoomInBtn" title="Přiblížit">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            </button>
+            <span class="zoom-level-val" id="zoomLevelVal">100%</span>
+            <button class="btn-zoom" id="zoomOutBtn" title="Oddálit">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            </button>
+        </div>
+        
+        <!-- Main Viewer Panel -->
+        <main class="main-content">
+            
+            <!-- Container for the 3D book cover/shadows -->
+            <div class="book-container-outer">
+                <div class="book-wrapper" id="bookWrapper">
+                    
+                    <!-- StPageFlip book mount point -->
+                    <div id="book">
+                        
+                        <!-- DEFAULT PLACEHOLDER PAGES (shown if no PDF is loaded) -->
+                        <div class="page" data-density="hard" id="p1">
+                            <div class="page-content cover-content">
+                                <div>
+                                    <h1 id="bookTitle">Dřevěný Kronikář</h1>
+                                    <div class="cover-subtitle">Příběhy z plovoucích ostrovů</div>
+                                </div>
+                                <div class="cover-art-container">
+                                    <img src="images/cover.png" alt="Obálka knihy">
+                                </div>
+                                <div>
+                                    <div class="cover-divider"></div>
+                                    <div class="cover-author">Evelyn Vance</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="page" id="p2">
+                            <div class="page-content">
+                                <div class="page-header">
+                                    <span>Kapitola I.</span>
+                                    <span>Ztracený Poutník</span>
+                                </div>
+                                <div class="page-body">
+                                    <h2>Cesta začíná</h2>
+                                    <p class="drop-cap">P ockroucené větve prastarého stromu života tiše šuměly v chladném nočním vánku. Pod nimi kráčela osamělá postava zahalená v tmavomodrém plášti, opírající se o dřevěnou hůl. Runicové nápisy na kmeni stromu jemně pulsovaly zlatavým světlem, osvětlující kamennou stezku vinoucí se hlouběji do magického lesa.</p>
+                                    <p>Nikdo nevěděl, odkud poutník přichází, ani co v tomto posvátném háji hledá. Legendy pravily, že ten, kdo najde srdce stromu života, získá vědomosti všech věků a pochopí tajemství gravitace plovoucích ostrovů.</p>
+                                </div>
+                                <div class="page-footer">
+                                    <span>Strana 1</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="page" id="p3">
+                            <div class="page-content">
+                                <div class="page-header">
+                                    <span>Kapitola I.</span>
+                                    <span>Ztracený Poutník</span>
+                                </div>
+                                <div class="page-body">
+                                    <div class="page-illustration">
+                                        <img src="images/landscape.png" alt="Krajina plovoucích ostrovů">
+                                    </div>
+                                    <p>Plovoucí ostrovy vznášející se vysoko v oblacích byly domovem prastarých chrámů. Z vodopádů stékaly proudy křišťálově čisté vody, které padaly do nekonečné hlubiny pod nimi, jen aby se znovu vypařily a vytvořily věčnou mlhu chránící obyvatele před světem dole.</p>
+                                </div>
+                                <div class="page-footer">
+                                    <span>Strana 2</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="page" id="p4">
+                            <div class="page-content">
+                                <div class="page-header">
+                                    <span>Kapitola II.</span>
+                                    <span>Hvězdná Obloha</span>
+                                </div>
+                                <div class="page-body">
+                                    <h2>Tajemství dvou sluncí</h2>
+                                    <p>Když se na obloze objevila obě slunce, obřad mohl konečně započít. Světlo se lámalo přes křišťálové věže chrámu a vytvářelo duhový most mezi jednotlivými ostrovy. Poutník se zastavil na okraji propasti a pohlédl na velkolepé město pod sebou, kde lidé žili v souladu s přírodními zákony magie.</p>
+                                    <p>„Čas se krátí,“ zašeptal poutník a zvedl svou hůl k nebi. V ten moment se oba sluneční kotouče spojily v jeden zářící kruh.</p>
+                                </div>
+                                <div class="page-footer">
+                                    <span>Strana 3</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="page" data-density="hard" id="p5">
+                            <div class="page-content cover-content" style="justify-content: center; background-image: linear-gradient(135deg, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.8) 100%);">
+                                <h1 style="font-size: 1.5rem; letter-spacing: 0.05em; color: #d1b894;">KONEC KRONIKY</h1>
+                                <div class="cover-divider" style="margin: 2rem auto;"></div>
+                                <p style="font-size: 0.85rem; color: rgba(247, 235, 198, 0.6); max-width: 250px; text-align: center; text-indent: 0; line-height: 1.8;">
+                                    Tato kniha byla vygenerována pro účely testování interaktivního 3D otáčení stránek.
+                                </p>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Bottom Scrubber Panel -->
+            <div class="bottom-controls-container">
+                <div class="scrubber-wrapper">
+                    <input type="range" class="progress-slider" id="pageScrubber" min="0" max="4" value="0">
+                </div>
+                <div class="glass-toolbar">
+                    <div class="toolbar-group">
+                        <button class="btn btn-secondary btn-icon" id="firstPageBtn" title="První stránka">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 19 2 12 11 5 11 19"/><polygon points="22 19 13 12 22 5 22 19"/></svg>
+                        </button>
+                        <button class="btn btn-secondary btn-icon" id="prevPageBtn" title="Předchozí stránka">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5"/></svg>
+                        </button>
+                    </div>
+                    
+                    <span class="page-indicator" id="pageIndicator">Strana 1 z 5</span>
+                    
+                    <div class="toolbar-group">
+                        <button class="btn btn-secondary btn-icon" id="nextPageBtn" title="Další stránka">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+                        </button>
+                        <button class="btn btn-secondary btn-icon" id="lastPageBtn" title="Poslední stránka">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 19 22 12 13 5 13 19"/><polygon points="2 19 11 12 2 5 2 19"/></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+        </main>
+        
+    </div>
+
+    <!-- External Libraries (PDF.js and StPageFlip) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.min.js"></script>
+    
+    <!-- Application Logic -->
+    <script src="script.js"></script>
+</body>
+</html>
